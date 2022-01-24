@@ -6,10 +6,10 @@ use std::any::Any;
 type SingleType = (dyn Any + Send + Sync);
 
 #[warn(dead_code)]
-static INSTANCE: OnceCell<DashMap<String, OnceCell<Box<SingleType>>>> = OnceCell::new();
+static INSTANCE: OnceCell<DashMap<&str, OnceCell<Box<SingleType>>>> = OnceCell::new();
 
 #[warn(dead_code)]
-pub fn single_init<'a>()-> &'a DashMap<String, once_cell::sync::OnceCell<Box<(dyn Any + Sync + std::marker::Send + 'a)>>>{
+pub fn single_init<'a>()-> &'a DashMap<&'a str, once_cell::sync::OnceCell<Box<(dyn Any + Sync + std::marker::Send + 'a)>>>{
     return INSTANCE.get_or_init(|| DashMap::new());
 }
 #[warn(dead_code)]
@@ -40,11 +40,18 @@ macro_rules! single_for{
     };
 }
 
+#[macro_export]
+macro_rules! single_get{
+    ($e:expr,$b:ty) => {
+        single_for!(single_init!(),$e,$b)
+    };
+}
+
 
 #[macro_export]
 macro_rules! single_add{
     ($key:expr,$val:expr) => {
-        $crate::com::single::single_init().entry($key).or_insert($crate::com::single::new_once()).get_or_init(||{
+        single_init!().entry($key).or_insert($crate::com::single::new_once()).get_or_init(||{
             $val
         });
     };
@@ -56,8 +63,8 @@ macro_rules! single_add{
 fn test_single(){
 
     let sin = single_init!();
-    single_add!("a".to_string(),Box::new("aaaa".to_string()));
-    let straa = single_for!(sin,&"a".to_string(),String);
+    single_add!("a",Box::new("aaaa".to_string()));
+    let straa = single_for!(sin,&"a",String);
     println!("rustl:{:?}",straa);
 
 }

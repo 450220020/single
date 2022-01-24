@@ -16,8 +16,8 @@ mod tests {
 fn test_one(){
 
     let sin = single_init!();
-    single_add!("a".to_string(),Box::new("aaaa".to_string()));
-    let straa = single_for!(sin,&"a".to_string(),String);
+    single_add!("a",Box::new("aaaa".to_string()));
+    let straa = single_for!(sin,"a",String);
     println!("rustl:{:?}",straa);
 
 }
