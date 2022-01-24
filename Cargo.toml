@@ -1,11 +1,11 @@
 [package]
-name = "single"
+name = "singlemap"
 version = "0.1.0"
 edition = "2021"
 readme = "README.md"
 license-file = "LICENSE"
-description = "rust single a macro"
-documentation = "https://docs.rs/single"
+description = "rust single map a macro"
+documentation = "https://docs.rs/singlemap"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
