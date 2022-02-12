@@ -23,20 +23,23 @@ macro_rules! get_loader {
 #[derive(Debug, Clone)]
 pub struct Assembly {}
 
+struct Error{
+    error_vec:Vec<LoaderType>
+}
 
 ///装载排序
-pub fn get_assembly_sort() ->Option<Vec<LoaderType>>{
+pub fn get_assembly_sort() ->Result<Vec<LoaderType>,Vec<LoaderType>>{
     let loading_max_size = get_loader!().len() + 1;
     let mut loding_idx = 0;
-    let mut ruslt_loading_vec = vec![];
+    let mut ruslt_loading_vec = vec!();
     let mut is_loding_true = HashMap::new();
-    let mut is_loding_false = HashMap::new();
+    let mut is_loding_false = vec!();
     loop {
         loding_idx += 1;
         if loding_idx >= loading_max_size {
             break;
         }
-        is_loding_false = HashMap::new();
+        is_loding_false = vec![];
         is_loding_true = HashMap::new();
         for ent in get_loader!() {
             if ent.0 {
@@ -58,7 +61,7 @@ pub fn get_assembly_sort() ->Option<Vec<LoaderType>>{
                     }
                 }
                 if !is_loading_ok {
-                    is_loding_false.insert(ent.key(), ent.clone());
+                    is_loding_false.push(ent.clone());
                     continue;
                 }
             }
@@ -75,8 +78,8 @@ pub fn get_assembly_sort() ->Option<Vec<LoaderType>>{
         }
     }
     if is_loding_false.len() > 0 {
-        return None;
+        return Err(is_loding_false);
     } else {
-        return Some(ruslt_loading_vec);
+        return Ok(ruslt_loading_vec);
     }
 }
